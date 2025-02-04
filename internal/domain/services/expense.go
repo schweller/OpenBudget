@@ -12,11 +12,15 @@ import (
 )
 
 type ExpenseService struct {
-	repo ports.ExpenseRepository
+	repo      ports.ExpenseRepository
+	labelRepo ports.LabelRepository
 }
 
-func NewExpenseService(repo ports.ExpenseRepository) *ExpenseService {
-	return &ExpenseService{repo: repo}
+func NewExpenseService(repo ports.ExpenseRepository, labelRepo ports.LabelRepository) *ExpenseService {
+	return &ExpenseService{
+		repo:      repo,
+		labelRepo: labelRepo,
+	}
 }
 
 func (c *ExpenseService) GetExpense(ctx context.Context, id uuid.UUID) (entities.Expense, error) {
@@ -50,6 +54,25 @@ func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decim
 
 	// Return the newly created expense
 	return e, nil
+}
+
+func (c *ExpenseService) AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
+	// Check if the label exists
+	_, err := c.labelRepo.GetByID(ctx, labelID)
+	if err != nil {
+		return entities.Expense{}, err
+	}
+
+	return c.repo.AddLabel(ctx, expenseID, labelID)
+}
+
+func (c *ExpenseService) RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
+	_, err := c.labelRepo.GetByID(ctx, labelID)
+	if err != nil {
+		return entities.Expense{}, err
+	}
+
+	return c.repo.RemoveLabel(ctx, expenseID, labelID)
 }
 
 func (c *ExpenseService) GetAllExpenses(ctx context.Context) ([]entities.Expense, error) {

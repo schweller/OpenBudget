@@ -14,7 +14,8 @@ type ExpenseRepository interface {
 	GetAll(ctx context.Context) ([]entities.Expense, error)
 	// GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Expense, error)
 	// GetRollovers(ctx context.Context) ([]entities.Expense, error)
-	// AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) error
+	AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
+	RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 }
 
 type BudgetRepository interface {
@@ -25,6 +26,7 @@ type BudgetRepository interface {
 
 type LabelRepository interface {
 	Create(ctx context.Context, label entities.Label) error
-	// GetByID(ctx context.Context, id uuid.UUID) (entities.Label, error)
+	GetByID(ctx context.Context, id uuid.UUID) (entities.Label, error)
+	// AssociateWithExpense(ctx context.Context, labelID, expenseID uuid.UUID) error
 	// ListAll(ctx context.Context) ([]entities.Label, error)
 }

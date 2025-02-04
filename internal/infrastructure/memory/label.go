@@ -17,6 +17,14 @@ func NewInMemoryLabelRepo() *InMemoryLabelRepository {
 	}
 }
 
+func (r *InMemoryLabelRepository) GetByID(ctx context.Context, id uuid.UUID) (entities.Label, error) {
+	label, ok := r.data[id]
+	if !ok {
+		return entities.Label{}, nil
+	}
+	return label, nil
+}
+
 func (r *InMemoryLabelRepository) Create(ctx context.Context, label entities.Label) error {
 	r.data[label.ID] = label
 	return nil

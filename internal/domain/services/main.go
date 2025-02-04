@@ -14,7 +14,7 @@ func NewContainer() *Container {
 
 	// Create services
 	labelService := NewLabelService(labelRepo)
-	expenseService := NewExpenseService(expenseRepo)
+	expenseService := NewExpenseService(expenseRepo, labelRepo)
 
 	// Create container
 	return &Container{

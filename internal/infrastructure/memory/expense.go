@@ -48,3 +48,32 @@ func (r *InMemoryExpenseRepository) Create(ctx context.Context, e entities.Expen
 	r.data[e.ID] = e
 	return nil
 }
+
+func (r *InMemoryExpenseRepository) AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
+	exp, ok := r.data[expenseID]
+	if !ok {
+		return entities.Expense{}, fmt.Errorf("expense not found: %s", expenseID)
+	}
+
+	exp.LabelIDs = append(exp.LabelIDs, labelID)
+	r.data[expenseID] = exp
+	return exp, nil
+}
+
+func (r *InMemoryExpenseRepository) RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
+	exp, ok := r.data[expenseID]
+	if !ok {
+		return entities.Expense{}, fmt.Errorf("expense not found: %s", expenseID)
+	}
+
+	// Find the label in the slice and remove it.
+	for i, id := range exp.LabelIDs {
+		if id == labelID {
+			exp.LabelIDs = append(exp.LabelIDs[:i], exp.LabelIDs[i+1:]...)
+			r.data[expenseID] = exp
+			return exp, nil
+		}
+	}
+
+	return entities.Expense{}, fmt.Errorf("label not found on expense: %s", labelID)
+}
