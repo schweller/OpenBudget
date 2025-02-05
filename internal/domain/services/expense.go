@@ -56,6 +56,22 @@ func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decim
 	return e, nil
 }
 
+func (c *ExpenseService) GetMonthlyExpenses(ctx context.Context, year, month int) ([]entities.Expense, error) {
+	// Basic validation checks (extend as needed)
+	if year < 0 || month < 1 || month > 12 {
+		return nil, errors.New("invalid year or month")
+	}
+
+	println("Fetching expenses for", year, month)
+
+	// Get the first and last day of the month
+	start := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	end := start.AddDate(0, 1, 0).Add(-time.Nanosecond)
+
+	// Fetch expenses for the given period
+	return c.repo.GetByPeriod(ctx, start, end)
+}
+
 func (c *ExpenseService) AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
 	// Check if the label exists
 	_, err := c.labelRepo.GetByID(ctx, labelID)

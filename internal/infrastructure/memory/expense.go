@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/schweller/expenzen/internal/domain/entities"
@@ -47,6 +48,18 @@ func (r *InMemoryExpenseRepository) Create(ctx context.Context, e entities.Expen
 
 	r.data[e.ID] = e
 	return nil
+}
+
+func (r *InMemoryExpenseRepository) GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Expense, error) {
+	results := make([]entities.Expense, 0)
+
+	for _, e := range r.data {
+		if e.Date.After(start) && e.Date.Before(end) {
+			results = append(results, e)
+		}
+	}
+
+	return results, nil
 }
 
 func (r *InMemoryExpenseRepository) AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {

@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/schweller/expenzen/internal/domain/entities"
@@ -12,7 +13,7 @@ type ExpenseRepository interface {
 	Create(ctx context.Context, expense entities.Expense) error
 	GetByID(ctx context.Context, id uuid.UUID) (entities.Expense, error)
 	GetAll(ctx context.Context) ([]entities.Expense, error)
-	// GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Expense, error)
+	GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Expense, error)
 	// GetRollovers(ctx context.Context) ([]entities.Expense, error)
 	AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)

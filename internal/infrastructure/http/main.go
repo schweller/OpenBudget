@@ -14,6 +14,8 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 	expenseHandler := NewExpenseHandler(c.ExpenseService)
 	srv.POST("/expenses", expenseHandler.handleCreateExpense)
 	srv.POST("/expenses/:expense_id/labels/:label_id", expenseHandler.handleAddLabel)
+	srv.GET("/expenses", expenseHandler.handleGetAllExpenses)
+	srv.GET("/expenses/by_month/:year/:month", expenseHandler.handleGetMonthlyExpenses)
 
 	labelHandler := NewLabelHandler(c.LabelService)
 	srv.POST("/label", labelHandler.handleCreateLabel)
