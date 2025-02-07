@@ -31,3 +31,8 @@ type LabelRepository interface {
 	// AssociateWithExpense(ctx context.Context, labelID, expenseID uuid.UUID) error
 	// ListAll(ctx context.Context) ([]entities.Label, error)
 }
+
+type IncomeRepository interface {
+	Create(ctx context.Context, income entities.Income) error
+	Update(ctx context.Context, income entities.Income) error
+}
