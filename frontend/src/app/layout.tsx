@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import React from 'react'
 import { Geist, Geist_Mono } from "next/font/google";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "./globals.css";
 import { Provider } from "@/components/ui/provider"
 
@@ -24,14 +26,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
+        },
+      }),
+  )
   return (
     <html lang="en" suppressHydrationWarning> 
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
-          {children}
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <Provider>
+            {children}
+          </Provider>
+        </QueryClientProvider>
       </body>
     </html>
   );

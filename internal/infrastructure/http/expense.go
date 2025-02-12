@@ -20,7 +20,16 @@ func NewExpenseHandler(s *services.ExpenseService) *ExpenseHandler {
 }
 
 func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
-	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(42.50), "Groceries", time.Now())
+	payload := struct {
+		Amount float64 `json:"amount"`
+		Name   string  `json:"name"`
+	}{}
+	err := c.Bind(&payload)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, time.Now())
 
 	if err != nil {
 		return err
