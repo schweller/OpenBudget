@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button, HStack, VStack } from "@chakra-ui/react"
-import { DemoTable } from "./table";
+import DemoTable from "./table";
 
 
 export default function Home() {

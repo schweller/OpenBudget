@@ -20,10 +20,10 @@ func (c *LabelService) GetLabelByID(id string) (string, error) {
 	return "", nil
 }
 
-func (c *LabelService) CreateLabel(ctx context.Context) (entities.Label, error) {
+func (c *LabelService) CreateLabel(ctx context.Context, name string) (entities.Label, error) {
 	l := entities.Label{
 		ID:    uuid.New(),
-		Name:  "Test",
+		Name:  name,
 		Color: "#000000",
 	}
 

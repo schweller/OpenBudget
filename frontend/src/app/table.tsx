@@ -1,6 +1,31 @@
+import React from 'react'
 import { Table } from "@chakra-ui/react"
+import { useQueryClient, useQuery } from "@tanstack/react-query"
 
-const Demo = () => {
+const fetchExpenses = async (limit = 10) => {
+  const response = await fetch('http://localhost:12323/expenses')
+  const data = await response.json()
+  return data
+}
+
+const usePosts = (limit: number) => {
+  return useQuery({
+    queryKey: ['posts', limit],
+    queryFn: () => fetchExpenses(limit),
+  })
+}
+
+export default async function Demo() {
+  // const { data, isPending, isFetching } = usePosts(10)
+
+  // if (isPending) return 'Loading...'
+
+  const data = await fetchExpenses()
+
+  console.log(data)
+
+  // console.log(JSON.parse(JSON.stringify(data)))
+
   return (
     <Table.Root size="sm">
       <Table.Header>
@@ -30,5 +55,3 @@ const items = [
   { id: 4, name: "Smartphone", category: "Electronics", price: 799.99 },
   { id: 5, name: "Headphones", category: "Accessories", price: 199.99 },
 ]
-
-export const DemoTable = () => <Demo />
