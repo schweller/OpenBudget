@@ -19,12 +19,18 @@ func NewExpenseHandler(s *services.ExpenseService) *ExpenseHandler {
 	return &ExpenseHandler{s}
 }
 
+type DTO struct {
+	Amount float64 `json:"amount"`
+	Name   string  `json:"name"`
+}
+
 func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
-	payload := struct {
-		Amount float64 `json:"amount"`
-		Name   string  `json:"name"`
-	}{}
+	var payload DTO
+
+	fmt.Println("Request body:", c.Request().Body)
 	err := c.Bind(&payload)
+	fmt.Println("Payload:", payload.Amount, payload.Name)
+
 	if err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
 	}

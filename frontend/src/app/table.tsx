@@ -1,57 +1,45 @@
-import React from 'react'
-import { Table } from "@chakra-ui/react"
-import { useQueryClient, useQuery } from "@tanstack/react-query"
+'use client'
+import React, { useEffect } from 'react'
+import { Button, Table, VStack, Input, HStack } from "@chakra-ui/react"
+import { addExpense, fetchExpenses } from './actions'
+import { Expense } from './expense'
 
-const fetchExpenses = async (limit = 10) => {
-  const response = await fetch('http://localhost:12323/expenses')
-  const data = await response.json()
-  return data
-}
-
-const usePosts = (limit: number) => {
-  return useQuery({
-    queryKey: ['posts', limit],
-    queryFn: () => fetchExpenses(limit),
-  })
-}
-
-export default async function Demo() {
-  // const { data, isPending, isFetching } = usePosts(10)
-
-  // if (isPending) return 'Loading...'
-
-  const data = await fetchExpenses()
-
-  console.log(data)
-
-  // console.log(JSON.parse(JSON.stringify(data)))
+export default function Demo({ expenses }: { expenses: Expense[] }) {
+  const [expenseName, setName] = React.useState('')
+  const [expenseAmount, setAmount] = React.useState(0)
 
   return (
-    <Table.Root size="sm">
-      <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeader>Expense</Table.ColumnHeader>
-          <Table.ColumnHeader>Labels</Table.ColumnHeader>
-          <Table.ColumnHeader textAlign="end">Amount</Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {items.map((item) => (
-          <Table.Row key={item.id}>
-            <Table.Cell>{item.name}</Table.Cell>
-            <Table.Cell>{item.category}</Table.Cell>
-            <Table.Cell textAlign="end">{item.price}</Table.Cell>
+    <VStack>
+      <Table.Root size="sm">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Expense</Table.ColumnHeader>
+            <Table.ColumnHeader>Labels</Table.ColumnHeader>
+            <Table.ColumnHeader textAlign="end">Amount</Table.ColumnHeader>
           </Table.Row>
-        ))}
-      </Table.Body>
-    </Table.Root>
+        </Table.Header>
+        <Table.Body>
+          {expenses.map((item) => (
+            <Table.Row key={item.ID}>
+              <Table.Cell>{item.Description}</Table.Cell>
+              <Table.Cell></Table.Cell>
+              <Table.Cell textAlign="end">{item.Amount}</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+      <HStack>
+        <Input placeholder="Enter a new expense" onChange={(e) => setName(e.target.value)}  />
+        <Input placeholder="Enter the amount" type='number' onChange={
+          (e) => {
+            var amount = parseFloat(e.target.value)
+            setAmount(amount)
+          } 
+        } />
+      </HStack>
+      <Button onClick={async () => {
+        await addExpense(expenseName, expenseAmount)
+      }}>Create a new expense</Button>
+    </VStack>
   )
 }
-
-const items = [
-  { id: 1, name: "Laptop", category: "Electronics", price: 999.99 },
-  { id: 2, name: "Coffee Maker", category: "Home Appliances", price: 49.99 },
-  { id: 3, name: "Desk Chair", category: "Furniture", price: 150.0 },
-  { id: 4, name: "Smartphone", category: "Electronics", price: 799.99 },
-  { id: 5, name: "Headphones", category: "Accessories", price: 199.99 },
-]

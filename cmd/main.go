@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	services "github.com/schweller/expenzen/internal/domain/services"
 	handlers "github.com/schweller/expenzen/internal/infrastructure/http"
 )
@@ -9,13 +10,7 @@ import (
 func initSrv(container *services.Container) *echo.Echo {
 	var srv = echo.New()
 
-	// srv.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-	// 	return func(c echo.Context) error {
-	// 		c.Set("core", app)
-	// 		return next(c)
-	// 	}
-	// })
-
+	srv.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {}))
 	handlers.InitHTTPHandlers(srv, container)
 
 	srv.Logger.Fatal(srv.Start(":1323"))
