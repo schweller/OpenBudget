@@ -2,6 +2,14 @@ export type Expense = {
   ID: number
   Description: string
   Amount: number
+  Date: string
+}
+
+export const emptyExpense: Expense = {
+  ID: 0,
+  Description: '',
+  Amount: 0,
+  Date: ''
 }
 
 export const fetchExpenses = async (limit = 10) => {

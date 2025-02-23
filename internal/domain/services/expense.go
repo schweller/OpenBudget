@@ -56,6 +56,25 @@ func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decim
 	return e, nil
 }
 
+func (c *ExpenseService) UpdateExpenses(ctx context.Context, id uuid.UUID, amount decimal.Decimal, description string, date time.Time) (entities.Expense, error) {
+	e, err := c.repo.GetByID(ctx, id)
+
+	if err != nil {
+		return entities.Expense{}, errors.New("Expense doesn't exist")
+	}
+
+	e.Amount = amount
+	e.Description = description
+
+	updatedEntity, err := c.repo.Update(ctx, e)
+
+	if err != nil {
+		return entities.Expense{}, err
+	}
+
+	return updatedEntity, nil
+}
+
 func (c *ExpenseService) GetMonthlyExpenses(ctx context.Context, year, month int) ([]entities.Expense, error) {
 	// Basic validation checks (extend as needed)
 	if year < 0 || month < 1 || month > 12 {
