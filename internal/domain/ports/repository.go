@@ -17,6 +17,7 @@ type ExpenseRepository interface {
 	// GetRollovers(ctx context.Context) ([]entities.Expense, error)
 	AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
+	Update(ctx context.Context, expense entities.Expense) (entities.Expense, error)
 }
 
 type BudgetRepository interface {

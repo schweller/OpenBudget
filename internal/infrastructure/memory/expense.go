@@ -90,3 +90,14 @@ func (r *InMemoryExpenseRepository) RemoveLabel(ctx context.Context, expenseID, 
 
 	return entities.Expense{}, fmt.Errorf("label not found on expense: %s", labelID)
 }
+
+func (r *InMemoryExpenseRepository) Update(ctx context.Context, e entities.Expense) (entities.Expense, error) {
+	// Check if the expense exists
+	_, ok := r.data[e.ID]
+	if !ok {
+		return entities.Expense{}, fmt.Errorf("expense not found: %s", e.ID)
+	}
+
+	r.data[e.ID] = e
+	return e, nil
+}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"github.com/teambition/rrule-go"
 )
 
 type Expense struct {
@@ -18,17 +19,8 @@ type Expense struct {
 }
 
 type RecurrenceRule struct {
-	Frequency Frequency
+	Frequency rrule.Frequency
 	Interval  int
 	ByDay     []time.Weekday
 	Until     *time.Time
 }
-
-type Frequency int
-
-const (
-	FrequencyDaily Frequency = iota
-	FrequencyWeekly
-	FrequencyMonthly
-	FrequencyYearly
-)
