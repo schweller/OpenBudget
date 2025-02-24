@@ -11,7 +11,7 @@ type Income struct {
 	ID          uuid.UUID
 	Amount      decimal.Decimal
 	Source      string
-	ReceivedAt  time.Time
+	Date        time.Time
 	Recurrence  RecurrenceRule
 	Description string
 }
