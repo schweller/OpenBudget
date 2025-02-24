@@ -35,5 +35,6 @@ type LabelRepository interface {
 
 type IncomeRepository interface {
 	Create(ctx context.Context, income entities.Income) error
-	Update(ctx context.Context, income entities.Income) error
+	GetAll(ctx context.Context) ([]entities.Income, error)
+	GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Income, error)
 }

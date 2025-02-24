@@ -1,8 +1,10 @@
 'use client'
+
 import React, { useEffect } from 'react'
 import { VStack, HStack } from "@chakra-ui/react"
 import { addExpense, fetchExpenses, updateExpense } from './actions'
 import { emptyExpense, Expense } from './expense'
+import { Income } from './income'
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -126,9 +128,8 @@ function ExpenseRow({ expense, callback }: { expense: Expense, callback: (e: Exp
   )
 }
 
-export default function Demo({ expenses }: { expenses: Expense[] }) {
-  const [expenseName, setName] = React.useState('')
-  const [expenseAmount, setAmount] = React.useState(0)
+export default function Demo({ expenses, incomes }: { expenses: Expense[], incomes: Income[] }) {
+  const [currentExpenses, setExpenses] = React.useState(expenses)
   const [selectedExpense, setSelectedExpense] = React.useState<Expense>(emptyExpense)
   const [open, setOpen] = React.useState(false)
 
@@ -139,7 +140,6 @@ export default function Demo({ expenses }: { expenses: Expense[] }) {
 
   return (
     <VStack>
-      <DialogDemo />
       <Table>
         <TableHeader>
           <TableRow>
@@ -150,10 +150,35 @@ export default function Demo({ expenses }: { expenses: Expense[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenses.map((item) => <ExpenseRow key={item.ID} callback={onExpenseClick} expense={item} />)}
+          {currentExpenses.map((item) => <ExpenseRow key={item.ID} callback={onExpenseClick} expense={item} />)}
         </TableBody>
       </Table>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Income Name</TableHead>
+            <TableHead>Labels</TableHead>
+            <TableHead>Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {incomes.map((item) => 
+            <TableRow key={item.ID}>
+              <TableCell>{item.Description}</TableCell>
+              <TableCell></TableCell>
+              <TableCell>{item.Amount}</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>      
       <ExpenseDialog expense={selectedExpense} open={open} setOpen={setOpen} />
+      <HStack>
+        <DialogDemo />
+        <Button type='submit' onClick={async () => {
+            const { data } = await fetchExpenses()
+            setExpenses(data)
+        }}>Reload Expenses</Button>      
+      </HStack>
     </VStack>
   )
 }

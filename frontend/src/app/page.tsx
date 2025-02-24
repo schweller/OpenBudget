@@ -8,10 +8,12 @@ import {
   Text
 } from "@chakra-ui/react"
 import Demo from "./table"
-import { fetchExpenses } from "./actions"
+import { fetchExpenses, fetchIncomes } from "./actions"
 
 export default async function Page() {
   const { data } = await fetchExpenses();
+  const response = await fetchIncomes();
+  console.log(response.data)
 
   return (
     <Box p={4}>
@@ -28,7 +30,7 @@ export default async function Page() {
       <Separator />
       <Box fontSize="xl" pt="10vh">
         <VStack gap="8" alignItems={"flex-start"}>
-          <Demo expenses={data} />
+          <Demo expenses={data} incomes={response.data} />
         </VStack>
       </Box>
     </Box>
