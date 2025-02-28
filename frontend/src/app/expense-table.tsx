@@ -128,7 +128,7 @@ function ExpenseRow({ expense, callback }: { expense: Expense, callback: (e: Exp
   )
 }
 
-export default function Demo({ expenses, incomes }: { expenses: Expense[], incomes: Income[] }) {
+export default function Demo({ expenses }: { expenses: Expense[]}) {
   const [currentExpenses, setExpenses] = React.useState(expenses)
   const [selectedExpense, setSelectedExpense] = React.useState<Expense>(emptyExpense)
   const [open, setOpen] = React.useState(false)
@@ -153,24 +153,6 @@ export default function Demo({ expenses, incomes }: { expenses: Expense[], incom
           {currentExpenses.map((item) => <ExpenseRow key={item.ID} callback={onExpenseClick} expense={item} />)}
         </TableBody>
       </Table>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Income Name</TableHead>
-            <TableHead>Labels</TableHead>
-            <TableHead>Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {incomes.map((item) => 
-            <TableRow key={item.ID}>
-              <TableCell>{item.Description}</TableCell>
-              <TableCell></TableCell>
-              <TableCell>{item.Amount}</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>      
       <ExpenseDialog expense={selectedExpense} open={open} setOpen={setOpen} />
       <HStack>
         <DialogDemo />

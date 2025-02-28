@@ -47,3 +47,19 @@ export const fetchIncomes = async (limit = 10): Promise<{data: Income[]}> => {
   const data = await response.json()
   return data
 }
+
+export const addIncome = async (name: string, amount: number) => {
+  const payload = {
+    name: name,
+    amount: amount
+  }
+  const response = await fetch('http://localhost:1323/incomes', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  const data = await response.json()
+  return data
+}

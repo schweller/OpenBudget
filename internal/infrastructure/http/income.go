@@ -42,7 +42,7 @@ func (h *IncomeHandler) handleCreateIncome(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	incomes, err := h.svc.CreateIncome(c.Request().Context(), decimal.NewFromFloat(payload.Amount))
+	incomes, err := h.svc.CreateIncome(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "error creating income group")
