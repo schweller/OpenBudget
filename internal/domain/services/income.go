@@ -22,7 +22,7 @@ func NewIncomeService(repo ports.IncomeRepository) *IncomeService {
 	}
 }
 
-func (c *IncomeService) CreateIncome(ctx context.Context, amount decimal.Decimal) (entities.Income, error) {
+func (c *IncomeService) CreateIncome(ctx context.Context, amount decimal.Decimal, name string) (entities.Income, error) {
 	r, _ := rrule.NewRRule(rrule.ROption{
 		Freq:    rrule.MONTHLY,
 		Dtstart: time.Now(),
@@ -31,9 +31,10 @@ func (c *IncomeService) CreateIncome(ctx context.Context, amount decimal.Decimal
 
 	for _, t := range r.All() {
 		i := entities.Income{
-			ID:     uuid.New(),
-			Amount: amount,
-			Date:   t,
+			ID:          uuid.New(),
+			Amount:      amount,
+			Date:        t,
+			Description: name,
 		}
 		c.repo.Create(ctx, i)
 	}
