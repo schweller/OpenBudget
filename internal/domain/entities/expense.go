@@ -9,10 +9,10 @@ import (
 )
 
 type Expense struct {
-	ID          uuid.UUID
-	Amount      decimal.Decimal
-	Description string
-	Date        time.Time
+	ID          uuid.UUID       `json:"id"`
+	Amount      decimal.Decimal `json:"amount"`
+	Description string          `json:"description"`
+	Date        time.Time       `json:"date"`
 	Recurrence  RecurrenceRule
 	IsRollover  bool
 	LabelIDs    []uuid.UUID

@@ -20,8 +20,9 @@ const formSchema = z.object({
   amount: z.coerce.number().positive({
     message: "Amount must be a positive number.",
   }),
-  date: z.date({
-    message: "Please select a date.",
+  date: z.coerce.date({
+    required_error: "Please select a date.",
+    invalid_type_error: "That's not a valid date!",
   }),
 })
 
@@ -40,7 +41,7 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
     resolver: zodResolver(formSchema),
     defaultValues: incomeItem
       ? {
-          amount: incomeItem.amount,
+          amount: parseInt(incomeItem.amount),
           date: new Date(incomeItem.date),
         }
       : {
@@ -53,8 +54,8 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
     if (incomeItem) {
       updateIncome(incomeItem.id, {
         ...incomeItem,
-        amount: values.amount,
-        date: values.date,
+        amount: values.amount.toString(),
+        date: values.date.toISOString(),
       })
     }
     router.push("/income")
@@ -151,7 +152,12 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
                       <FormItem>
                         <FormLabel>Date</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} value={field.value.toISOString().split('T')[0]} />
+                          <Input
+                            type="date"
+                            {...field}
+                            value={field.value instanceof Date ? field.value.toISOString().split("T")[0] : ""}
+                            onChange={(e) => field.onChange(new Date(e.target.value))}
+                          />
                         </FormControl>
                         <FormDescription>The date the income was received</FormDescription>
                         <FormMessage />

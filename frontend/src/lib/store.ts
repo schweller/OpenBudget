@@ -119,11 +119,11 @@ export const useFinanceStore = create<FinanceStore>()(
       },
       calculateTotalExpenses: () => {
         const expenses = get().expenses
-        return expenses.reduce((total, expense) => total + expense.amount, 0)
+        return expenses.reduce((total, expense) => total + parseInt(expense.amount), 0)
       },
       calculateTotalIncome: () => {
         const expenses = get().income
-        return expenses.reduce((total, income) => total + income.amount, 0)
+        return expenses.reduce((total, income) => total + parseInt(income.amount), 0)
       },
     }),
     {

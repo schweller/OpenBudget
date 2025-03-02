@@ -29,3 +29,11 @@ func (r *InMemoryLabelRepository) Create(ctx context.Context, label entities.Lab
 	r.data[label.ID] = label
 	return nil
 }
+
+func (r *InMemoryLabelRepository) GetAllLabels(ctx context.Context) ([]entities.Label, error) {
+	var labels []entities.Label
+	for _, label := range r.data {
+		labels = append(labels, label)
+	}
+	return labels, nil
+}

@@ -37,12 +37,7 @@ export function ExpenseTable({ limit, startDate, endDate }: ExpenseTableProps) {
     }
   }
 
-  const filteredExpenses = expenses.filter((expense) => {
-    const expenseDate = new Date(expense.date)
-    return (!startDate || expenseDate >= startDate) && (!endDate || expenseDate <= endDate)
-  })
-
-  const sortedExpenses = [...filteredExpenses].sort((a, b) => {
+  const sortedExpenses = [...expenses].sort((a, b) => {
     if (sortField === "date") {
       return sortDirection === "asc"
         ? new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -55,7 +50,7 @@ export function ExpenseTable({ limit, startDate, endDate }: ExpenseTableProps) {
   })
 
   const displayExpenses = limit ? sortedExpenses.slice(0, limit) : sortedExpenses
-
+  
   return (
     <div className="rounded-md border">
       <Table>
@@ -80,7 +75,7 @@ export function ExpenseTable({ limit, startDate, endDate }: ExpenseTableProps) {
               <TableRow key={expense.id}>
                 <TableCell>{expense.description}</TableCell>
                 <TableCell>{expense.category}</TableCell>
-                <TableCell className="text-red-500">${expense.amount.toFixed(2)}</TableCell>
+                <TableCell className="text-red-500">${expense.amount}</TableCell>
                 <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <Link href={`/expenses/edit/${expense.id}`}>

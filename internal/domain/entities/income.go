@@ -8,10 +8,10 @@ import (
 )
 
 type Income struct {
-	ID          uuid.UUID
-	Amount      decimal.Decimal
-	Source      string
-	Date        time.Time
+	ID          uuid.UUID       `json:"id"`
+	Amount      decimal.Decimal `json:"amount"`
+	Source      string          `json:"source"`
+	Date        time.Time       `json:"date"`
 	Recurrence  RecurrenceRule
-	Description string
+	Description string `json:"description"`
 }
