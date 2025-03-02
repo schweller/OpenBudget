@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/schweller/expenzen/internal/domain/entities"
 	services "github.com/schweller/expenzen/internal/domain/services"
 	"github.com/shopspring/decimal"
 )
@@ -20,9 +21,10 @@ func NewExpenseHandler(s *services.ExpenseService) *ExpenseHandler {
 }
 
 type DTO struct {
-	Amount float64 `json:"amount"`
-	Name   string  `json:"name"`
-	Date   string  `json:"date,omitempty"`
+	Amount float64          `json:"amount"`
+	Name   string           `json:"name"`
+	Date   string           `json:"date,omitempty"`
+	Labels []entities.Label `json:"labels,omitempty"`
 }
 
 func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
@@ -30,7 +32,7 @@ func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
 
 	fmt.Println("Request body:", c.Request().Body)
 	err := c.Bind(&payload)
-	fmt.Println("Payload:", payload.Amount, payload.Name)
+	fmt.Println("Payload:", payload.Amount, payload.Name, payload.Labels)
 
 	if err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
@@ -46,7 +48,12 @@ func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
 		date = time.Now()
 	}
 
-	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, date)
+	var labelIDs []uuid.UUID
+	for _, label := range payload.Labels {
+		labelIDs = append(labelIDs, label.ID)
+	}
+
+	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, date, labelIDs)
 
 	if err != nil {
 		return err

@@ -13,6 +13,7 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 
 	expenseHandler := NewExpenseHandler(c.ExpenseService)
 	incomeHandler := NewIncomeHandler(c.IncomeService)
+	labelHandler := NewLabelHandler(c.LabelService)
 	srv.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
@@ -35,7 +36,6 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 	srv.GET("/incomes/by_month/:year/:month", incomeHandler.handleGetMonthlyIncomes)
 	srv.POST("/incomes", incomeHandler.handleCreateIncome)
 
-	labelHandler := NewLabelHandler(c.LabelService)
-	srv.POST("/label", labelHandler.handleCreateLabel)
-	srv.GET("/label", labelHandler.handleGetLabels)
+	srv.GET("/labels", labelHandler.handleGetLabels)
+	srv.POST("/labels", labelHandler.handleCreateLabel)
 }

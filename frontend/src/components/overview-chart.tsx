@@ -37,7 +37,7 @@ export function OverviewChart({ startDate, endDate }: OverviewChartProps) {
   const monthlyData: Record<string, { expenses: number; income: number }> = {}
 
   // Process expenses
-  filteredExpenses.forEach((expense) => {
+  expenses.forEach((expense) => {
     const date = new Date(expense.date)
     const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
 
@@ -45,11 +45,11 @@ export function OverviewChart({ startDate, endDate }: OverviewChartProps) {
       monthlyData[monthYear] = { expenses: 0, income: 0 }
     }
 
-    monthlyData[monthYear].expenses += expense.amount
+    monthlyData[monthYear].expenses += parseInt(expense.amount)
   })
 
   // Process income
-  filteredIncome.forEach((item) => {
+  income.forEach((item) => {
     const date = new Date(item.date)
     const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
 
@@ -57,7 +57,7 @@ export function OverviewChart({ startDate, endDate }: OverviewChartProps) {
       monthlyData[monthYear] = { expenses: 0, income: 0 }
     }
 
-    monthlyData[monthYear].income += item.amount
+    monthlyData[monthYear].income += parseInt(item.amount)
   })
 
   // Convert to array for chart
@@ -78,6 +78,8 @@ export function OverviewChart({ startDate, endDate }: OverviewChartProps) {
       return aDate.getTime() - bDate.getTime()
     })
 
+
+  console.log(data)
   return (
     <ResponsiveContainer width="100%" height="100%">
       {data.length > 0 ? (
@@ -85,8 +87,10 @@ export function OverviewChart({ startDate, endDate }: OverviewChartProps) {
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip
-            formatter={(value: number) => [`$${value.toFixed(2)}`, ""]}
-            labelFormatter={(label) => `Month: ${label}`}
+            // formatter={(value: number) => [`$${value.toFixed(2)}`, ""]}
+            // this needs to be fixed because now value is a string and not a number
+            formatter={(value: string) => [`$${value}`, ""]}
+            labelFormatter={(label) => `${label}`}
           />
           <Legend />
           <Bar dataKey="income" name="Income" fill="hsl(var(--chart-1))" />

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/schweller/expenzen/internal/domain/entities"
 	"github.com/schweller/expenzen/internal/domain/services"
 )
 
@@ -41,8 +42,8 @@ func (h *LabelHandler) handleCreateLabel(c echo.Context) error {
 func (h *LabelHandler) handleGetLabels(c echo.Context) error {
 
 	payload := struct {
-		StartDate time.Time `json:"start_date"`
-		EndDate   time.Time `json:"end_date"`
+		StartDate time.Time `query:"startDate"`
+		EndDate   time.Time `query:"endDate"`
 	}{}
 
 	err := c.Bind(&payload)
@@ -53,8 +54,17 @@ func (h *LabelHandler) handleGetLabels(c echo.Context) error {
 
 	lab, err := h.svc.GetLabelsByPeriod(c.Request().Context(), payload.StartDate, payload.EndDate)
 
+	fmt.Println("All labels fetched:", lab)
+
 	if err != nil {
 		return err
 	}
+
+	if len(lab) == 0 {
+		fmt.Println("Warning: returning empty list")
+		// Consider returning an empty array instead of null
+		return c.JSON(http.StatusOK, okResp{[]entities.Label{}})
+	}
+
 	return c.JSON(http.StatusOK, okResp{lab})
 }

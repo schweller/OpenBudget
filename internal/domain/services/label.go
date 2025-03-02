@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,14 +44,15 @@ func (c *LabelService) GetLabelsByPeriod(ctx context.Context, start, end time.Ti
 		labels[i].TotalExpenses = totalSum
 	}
 
+	fmt.Println(labels)
+
 	return labels, nil
 }
 
 func (c *LabelService) CreateLabel(ctx context.Context, name string) (entities.Label, error) {
 	l := entities.Label{
-		ID:    uuid.New(),
-		Name:  name,
-		Color: "#000000",
+		ID:   uuid.New(),
+		Name: name,
 	}
 
 	if err := c.repo.Create(ctx, l); err != nil {

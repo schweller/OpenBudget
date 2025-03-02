@@ -2,22 +2,28 @@
 
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { 
+import {
   fetchExpenses,
   fetchIncome,
-  Expense,
-  Income,
+  fetchLabels,
+  type Expense,
+  type Income,
+  type Label,
   addExpense,
   addIncome,
   updateIncome,
   deleteIncome,
   deleteExpense,
-  updateExpense
- } from "./api"
+  updateExpense,
+  addLabel,
+  updateLabel,
+  deleteLabel,
+} from "./api"
 
 interface FinanceStore {
   expenses: Expense[]
   income: Income[]
+  labels: Label[]
   startDate: Date
   endDate: Date
   isLoading: boolean
@@ -29,6 +35,9 @@ interface FinanceStore {
   addIncome: (income: Omit<Income, "id" | "description">) => Promise<void>
   updateIncome: (id: string, income: Omit<Income, "id">) => Promise<void>
   deleteIncome: (id: string) => Promise<void>
+  addLabel: (label: Omit<Label, "id">) => Promise<void>
+  updateLabel: (id: string, label: Omit<Label, "id">) => Promise<void>
+  deleteLabel: (id: string) => Promise<void>
   setDateRange: (startDate: Date, endDate: Date) => void
   calculateTotalExpenses: () => number
   calculateTotalIncome: () => number
@@ -39,6 +48,7 @@ export const useFinanceStore = create<FinanceStore>()(
     (set, get) => ({
       expenses: [],
       income: [],
+      labels: [],
       startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
       endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
       isLoading: false,
@@ -47,11 +57,12 @@ export const useFinanceStore = create<FinanceStore>()(
         set({ isLoading: true, error: null })
         try {
           const { startDate, endDate } = get()
-          const [{data}, income] = await Promise.all([
+          const [{ data: expenses }, { data: income }, { data: labels }] = await Promise.all([
             fetchExpenses(startDate, endDate),
             fetchIncome(startDate, endDate),
+            fetchLabels(startDate, endDate),
           ])
-          set({ expenses: data, income: income.data, isLoading: false })
+          set({ expenses, income, labels, isLoading: false })
         } catch (error) {
           console.log(error)
           set({ error: (error as Error).message, isLoading: false })
@@ -113,17 +124,45 @@ export const useFinanceStore = create<FinanceStore>()(
           set({ error: (error as Error).message })
         }
       },
+      addLabel: async (label) => {
+        try {
+          const newLabel = await addLabel(label)
+          set((state) => ({ labels: [...state.labels, newLabel] }))
+        } catch (error) {
+          set({ error: (error as Error).message })
+        }
+      },
+      updateLabel: async (id, label) => {
+        try {
+          const updatedLabel = await updateLabel(id, label)
+          set((state) => ({
+            labels: state.labels.map((l) => (l.id === id ? updatedLabel : l)),
+          }))
+        } catch (error) {
+          set({ error: (error as Error).message })
+        }
+      },
+      deleteLabel: async (id) => {
+        try {
+          await deleteLabel(id)
+          set((state) => ({
+            labels: state.labels.filter((l) => l.id !== id),
+          }))
+        } catch (error) {
+          set({ error: (error as Error).message })
+        }
+      },
       setDateRange: (startDate: Date, endDate: Date) => {
         set({ startDate, endDate })
         get().fetchData()
       },
       calculateTotalExpenses: () => {
         const expenses = get().expenses
-        return expenses.reduce((total, expense) => total + parseInt(expense.amount), 0)
+        return expenses.reduce((total, expense) => total + Number(expense.amount), 0)
       },
       calculateTotalIncome: () => {
-        const expenses = get().income
-        return expenses.reduce((total, income) => total + parseInt(income.amount), 0)
+        const income = get().income
+        return income.reduce((total, income) => total + Number(income.amount), 0)
       },
     }),
     {

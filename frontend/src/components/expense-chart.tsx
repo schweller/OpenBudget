@@ -11,7 +11,7 @@ interface ExpenseChartProps {
 }
 
 export function ExpenseChart({ startDate, endDate }: ExpenseChartProps) {
-  const { expenses } = useFinanceStore()
+  const { expenses, labels } = useFinanceStore()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -28,21 +28,32 @@ export function ExpenseChart({ startDate, endDate }: ExpenseChartProps) {
     return (!startDate || expenseDate >= startDate) && (!endDate || expenseDate <= endDate)
   })
 
-  // Group expenses by category and sum amounts
-  const categoryData = filteredExpenses.reduce(
+  const labelMap = labels.reduce((acc, label) => {
+    acc[label.id] = label.name
+    return acc
+  }, {} as Record<string, string>)
+
+  // Group expenses by label and sum amounts
+  const labelData = expenses.reduce(
     (acc, expense) => {
-      const category = expense.category
-      if (!acc[category]) {
-        acc[category] = 0
-      }
-      acc[category] += expense.amount
+      expense.labels.forEach((label) => {
+        const labelName = labelMap[label]
+        if (!acc[labelName]) {
+          acc[labelName] = 0
+        }
+        console.log(typeof expense.amount)
+        // fix this type issue later, make it consistent
+        acc[labelName] += parseInt(expense.amount)
+      })
       return acc
     },
     {} as Record<string, number>,
   )
 
+  console.log(labelData)
+
   // Convert to array for chart
-  const data = Object.entries(categoryData).map(([name, value]) => ({
+  const data = Object.entries(labelData).map(([name, value]) => ({
     name,
     value,
   }))

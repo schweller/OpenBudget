@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ExpenseChart } from "@/components/expense-chart"
 import { ExpenseTable } from "@/components/expense-table"
 import { useFinanceStore } from "@/lib/store"
+import { Header } from "@/components/header"
 
 export default function ExpensesPage() {
   const { calculateTotalExpenses, startDate, endDate, setDateRange, fetchData, isLoading, error } = useFinanceStore()
@@ -32,28 +33,7 @@ export default function ExpensesPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold">OpenBudget</span>
-            </Link>
-          </div>
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            <nav className="flex items-center space-x-2">
-              <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
-              </Link>
-              <Link href="/expenses">
-                <Button variant="ghost">Expenses</Button>
-              </Link>
-              <Link href="/income">
-                <Button variant="ghost">Income</Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
       <main className="flex-1 space-y-4 p-4 md:p-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Expenses</h1>

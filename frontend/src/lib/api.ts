@@ -1,8 +1,8 @@
 export interface Expense {
   id: string
   description: string
-  category: string
-  amount: string
+  labels: string[]
+  amount: number
   date: string
 }
 
@@ -10,28 +10,40 @@ export interface Income {
   id: string
   description: string
   source: string
-  amount: string
-  date:   string
+  amount: number
+  date: string
+}
+
+export interface Label {
+  id: string
+  name: string
+  amount?: number
 }
 
 const API_ENDPOINT = "http://localhost:1323" // Replace with your actual API endpoint
 
-export async function fetchExpenses(startDate: Date, endDate: Date): Promise<{ data: Expense[]} > {
-  const response = await fetch(
-    `${API_ENDPOINT}/expenses`,
-  )
+export async function fetchExpenses(startDate: Date, endDate: Date): Promise<{ data: Expense[] }> {
+  const response = await fetch(`${API_ENDPOINT}/expenses`)
   if (!response.ok) {
     throw new Error("Failed to fetch expenses")
   }
   return response.json()
 }
 
-export async function fetchIncome(startDate: Date, endDate: Date): Promise<{ data: Income[]}> {
-  const response = await fetch(
-    `${API_ENDPOINT}/incomes`,
-  )
+export async function fetchIncome(startDate: Date, endDate: Date): Promise<{ data: Income[] }> {
+  const response = await fetch(`${API_ENDPOINT}/incomes`)
   if (!response.ok) {
     throw new Error("Failed to fetch income")
+  }
+  return response.json()
+}
+
+export async function fetchLabels(startDate: Date, endDate: Date): Promise<{ data: Label[] }> {
+  const response = await fetch(
+    `${API_ENDPOINT}/labels?startDate=${startDate}&endDate=${endDate}`,
+  )
+  if (!response.ok) {
+    throw new Error("Failed to fetch labels")
   }
   return response.json()
 }
@@ -107,6 +119,43 @@ export async function deleteIncome(id: string): Promise<void> {
   })
   if (!response.ok) {
     throw new Error("Failed to delete income")
+  }
+}
+
+export async function addLabel(label: Omit<Label, "id">): Promise<Label> {
+  const response = await fetch(`${API_ENDPOINT}/labels`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(label),
+  })
+  if (!response.ok) {
+    throw new Error("Failed to add label")
+  }
+  return response.json()
+}
+
+export async function updateLabel(id: string, label: Omit<Label, "id">): Promise<Label> {
+  const response = await fetch(`${API_ENDPOINT}/labels/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(label),
+  })
+  if (!response.ok) {
+    throw new Error("Failed to update label")
+  }
+  return response.json()
+}
+
+export async function deleteLabel(id: string): Promise<void> {
+  const response = await fetch(`${API_ENDPOINT}/labels/${id}`, {
+    method: "DELETE",
+  })
+  if (!response.ok) {
+    throw new Error("Failed to delete label")
   }
 }
 
