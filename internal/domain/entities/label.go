@@ -7,10 +7,7 @@ import (
 
 // Label with budget association
 type Label struct {
-	ID            uuid.UUID
-	Name          string
-	Color         string
-	TotalExpenses decimal.Decimal
-
-	Budgets []Budget
+	ID            uuid.UUID       `json:"id"`
+	Name          string          `json:"name"`
+	TotalExpenses decimal.Decimal `json:"totalExpenses,omitempty"`
 }

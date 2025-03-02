@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useFinanceStore } from "@/lib/store"
+import { Header } from "@/components/header"
 
 const formSchema = z.object({
   source: z.string().min(2, {
@@ -20,9 +21,8 @@ const formSchema = z.object({
   amount: z.coerce.number().positive({
     message: "Amount must be a positive number.",
   }),
-  date: z.coerce.date({
-    required_error: "Please select a date.",
-    invalid_type_error: "That's not a valid date!",
+  date: z.date({
+    message: "Please select a date.",
   }),
 })
 
@@ -41,11 +41,11 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
     resolver: zodResolver(formSchema),
     defaultValues: incomeItem
       ? {
-          amount: parseInt(incomeItem.amount),
+          amount: incomeItem.amount,
           date: new Date(incomeItem.date),
         }
       : {
-          amount: undefined,
+          amount: 0,
           date: new Date(),
         },
   })
@@ -54,7 +54,7 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
     if (incomeItem) {
       updateIncome(incomeItem.id, {
         ...incomeItem,
-        amount: values.amount.toString(),
+        amount: values.amount,
         date: values.date.toISOString(),
       })
     }
@@ -85,28 +85,7 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold">OpenBudget</span>
-            </Link>
-          </div>
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            <nav className="flex items-center space-x-2">
-              <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
-              </Link>
-              <Link href="/expenses">
-                <Button variant="ghost">Expenses</Button>
-              </Link>
-              <Link href="/income">
-                <Button variant="ghost">Income</Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
       <main className="flex-1 p-4 md:p-8">
         <div className="mx-auto max-w-md">
           <Card>
@@ -138,7 +117,15 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
                       <FormItem>
                         <FormLabel>Amount</FormLabel>
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(e.target.value === "" ? 0 : Number.parseFloat(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormDescription>The amount received</FormDescription>
                         <FormMessage />
@@ -152,12 +139,7 @@ export default function EditIncomePage({ params }: { params: { id: string } }) {
                       <FormItem>
                         <FormLabel>Date</FormLabel>
                         <FormControl>
-                          <Input
-                            type="date"
-                            {...field}
-                            value={field.value instanceof Date ? field.value.toISOString().split("T")[0] : ""}
-                            onChange={(e) => field.onChange(new Date(e.target.value))}
-                          />
+                          <Input type="date" {...field} value={field.value.toISOString().split("T")[0]} />
                         </FormControl>
                         <FormDescription>The date the income was received</FormDescription>
                         <FormMessage />

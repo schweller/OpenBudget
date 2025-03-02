@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { MultiSelect } from "@/components/ui/multi-select"
 import { useFinanceStore } from "@/lib/store"
+import { Header } from "@/components/header"
 
 const formSchema = z.object({
   description: z.string().min(2, {
@@ -21,9 +22,16 @@ const formSchema = z.object({
   amount: z.coerce.number().positive({
     message: "Amount must be a positive number.",
   }),
-  category: z.string().min(1, {
-    message: "Please select a category.",
-  }),
+  labels: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+      }),
+    )
+    .min(1, {
+      message: "Please select at least one label.",
+    }),
   date: z.coerce.date({
     required_error: "Please select a date.",
     invalid_type_error: "That's not a valid date!",
@@ -32,7 +40,7 @@ const formSchema = z.object({
 
 export default function AddExpensePage() {
   const router = useRouter()
-  const { addExpense } = useFinanceStore()
+  const { addExpense, labels } = useFinanceStore()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -43,8 +51,8 @@ export default function AddExpensePage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
-      amount: undefined,
-      category: "",
+      amount: 0, // Change from undefined to 0
+      labels: [],
       date: new Date(),
     },
   })
@@ -52,8 +60,9 @@ export default function AddExpensePage() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     addExpense({
       description: values.description,
-      amount: values.amount.toString(),
-      category: values.category,
+      amount: values.amount,
+      // fix this type issue later, make it consistent
+      labels: values.labels,
       date: values.date.toISOString(),
     })
     router.push("/expenses")
@@ -65,28 +74,7 @@ export default function AddExpensePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold">OpenBudget</span>
-            </Link>
-          </div>
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            <nav className="flex items-center space-x-2">
-              <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
-              </Link>
-              <Link href="/expenses">
-                <Button variant="ghost">Expenses</Button>
-              </Link>
-              <Link href="/income">
-                <Button variant="ghost">Income</Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
       <main className="flex-1 p-4 md:p-8">
         <div className="mx-auto max-w-md">
           <Card>
@@ -118,7 +106,15 @@ export default function AddExpensePage() {
                       <FormItem>
                         <FormLabel>Amount</FormLabel>
                         <FormControl>
-                          <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(e.target.value === "" ? 0 : Number.parseFloat(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormDescription>The amount spent</FormDescription>
                         <FormMessage />
@@ -127,29 +123,19 @@ export default function AddExpensePage() {
                   />
                   <FormField
                     control={form.control}
-                    name="category"
+                    name="labels"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Category</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Housing">Housing</SelectItem>
-                            <SelectItem value="Transportation">Transportation</SelectItem>
-                            <SelectItem value="Food">Food</SelectItem>
-                            <SelectItem value="Utilities">Utilities</SelectItem>
-                            <SelectItem value="Healthcare">Healthcare</SelectItem>
-                            <SelectItem value="Entertainment">Entertainment</SelectItem>
-                            <SelectItem value="Shopping">Shopping</SelectItem>
-                            <SelectItem value="Education">Education</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>The category of the expense</FormDescription>
+                        <FormLabel>Labels</FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            options={labels}
+                            selected={field.value}
+                            onChange={(selected) => field.onChange(selected)}
+                            placeholder="Select labels"
+                          />
+                        </FormControl>
+                        <FormDescription>Select one or more labels for the expense</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

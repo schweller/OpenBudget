@@ -13,9 +13,9 @@ type Expense struct {
 	Amount      decimal.Decimal `json:"amount"`
 	Description string          `json:"description"`
 	Date        time.Time       `json:"date"`
+	LabelIDs    []uuid.UUID     `json:"labels"`
 	Recurrence  RecurrenceRule
 	IsRollover  bool
-	LabelIDs    []uuid.UUID
 }
 
 type RecurrenceRule struct {

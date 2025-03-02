@@ -33,7 +33,7 @@ func (c *ExpenseService) GetExpense(ctx context.Context, id uuid.UUID) (entities
 	return out, nil
 }
 
-func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decimal, description string, date time.Time) (entities.Expense, error) {
+func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decimal, description string, date time.Time, labels []uuid.UUID) (entities.Expense, error) {
 	// Basic validation checks (extend as needed)
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return entities.Expense{}, errors.New("expense amount must be positive")
@@ -45,6 +45,7 @@ func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decim
 		Amount:      amount,
 		Description: description,
 		Date:        date,
+		LabelIDs:    labels,
 	}
 
 	// Persist it using the repository
@@ -60,7 +61,7 @@ func (c *ExpenseService) UpdateExpenses(ctx context.Context, id uuid.UUID, amoun
 	e, err := c.repo.GetByID(ctx, id)
 
 	if err != nil {
-		return entities.Expense{}, errors.New("Expense doesn't exist")
+		return entities.Expense{}, errors.New("expense doesn't exist")
 	}
 
 	e.Amount = amount
