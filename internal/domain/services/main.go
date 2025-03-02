@@ -15,7 +15,7 @@ func NewContainer() *Container {
 	incomeRepo := memory.NewInMemoryIncomeRepository()
 
 	// Create services
-	labelService := NewLabelService(labelRepo)
+	labelService := NewLabelService(labelRepo, expenseRepo)
 	expenseService := NewExpenseService(expenseRepo, labelRepo)
 	incomeService := NewIncomeService(incomeRepo)
 

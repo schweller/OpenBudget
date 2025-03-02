@@ -339,7 +339,7 @@ export default function DashboardPage() {
                         <div>
                           <p className="text-sm text-muted-foreground">{new Date(item.date).toLocaleDateString()}</p>
                         </div>
-                        <div className="font-medium text-green-500">${item.amount.toFixed(2)}</div>
+                        <div className="font-medium text-green-500">${item.amount}</div>
                       </div>
                     ))
                   ) : (

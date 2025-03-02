@@ -22,6 +22,7 @@ func NewExpenseHandler(s *services.ExpenseService) *ExpenseHandler {
 type DTO struct {
 	Amount float64 `json:"amount"`
 	Name   string  `json:"name"`
+	Date   string  `json:"date,omitempty"`
 }
 
 func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
@@ -35,7 +36,17 @@ func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "bad request")
 	}
 
-	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, time.Now())
+	var date time.Time
+	if payload.Date != "" {
+		date, err = time.Parse(time.RFC3339, payload.Date)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "invalid date format")
+		}
+	} else {
+		date = time.Now()
+	}
+
+	exp, err := h.svc.CreateExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, date)
 
 	if err != nil {
 		return err

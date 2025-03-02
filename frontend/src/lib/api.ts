@@ -2,16 +2,16 @@ export interface Expense {
   id: string
   description: string
   category: string
-  amount: number
-  date: Date
+  amount: string
+  date: string
 }
 
 export interface Income {
   id: string
   description: string
   source: string
-  amount: number
-  date: Date
+  amount: string
+  date:   string
 }
 
 const API_ENDPOINT = "http://localhost:1323" // Replace with your actual API endpoint

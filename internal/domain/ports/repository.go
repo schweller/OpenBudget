@@ -18,6 +18,7 @@ type ExpenseRepository interface {
 	AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	Update(ctx context.Context, expense entities.Expense) (entities.Expense, error)
+	GetExpensesByLabelAndPeriod(ctx context.Context, labelID uuid.UUID, start, end time.Time) ([]entities.Expense, error)
 }
 
 type BudgetRepository interface {
@@ -29,6 +30,7 @@ type BudgetRepository interface {
 type LabelRepository interface {
 	Create(ctx context.Context, label entities.Label) error
 	GetByID(ctx context.Context, id uuid.UUID) (entities.Label, error)
+	GetAllLabels(ctx context.Context) ([]entities.Label, error)
 	// AssociateWithExpense(ctx context.Context, labelID, expenseID uuid.UUID) error
 	// ListAll(ctx context.Context) ([]entities.Label, error)
 }

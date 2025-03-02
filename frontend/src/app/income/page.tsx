@@ -139,7 +139,7 @@ export default function IncomePage() {
                         <p className="text-sm text-muted-foreground">{new Date(item.date).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="font-medium text-green-500">${item.amount.toFixed(2)}</div>
+                        <div className="font-medium text-green-500">${item.amount}</div>
                         <Link href={`/income/edit/${item.id}`}>
                           <Button variant="ghost" size="sm">
                             Edit

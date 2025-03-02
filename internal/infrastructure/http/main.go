@@ -37,4 +37,5 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 
 	labelHandler := NewLabelHandler(c.LabelService)
 	srv.POST("/label", labelHandler.handleCreateLabel)
+	srv.GET("/label", labelHandler.handleGetLabels)
 }

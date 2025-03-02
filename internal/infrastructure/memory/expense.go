@@ -62,6 +62,23 @@ func (r *InMemoryExpenseRepository) GetByPeriod(ctx context.Context, start, end 
 	return results, nil
 }
 
+func (r *InMemoryExpenseRepository) GetExpensesByLabelAndPeriod(ctx context.Context, labelID uuid.UUID, start, end time.Time) ([]entities.Expense, error) {
+	results := make([]entities.Expense, 0)
+
+	for _, e := range r.data {
+		if e.Date.After(start) && e.Date.Before(end) {
+			for _, id := range e.LabelIDs {
+				if id == labelID {
+					results = append(results, e)
+					break
+				}
+			}
+		}
+	}
+
+	return results, nil
+}
+
 func (r *InMemoryExpenseRepository) AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error) {
 	exp, ok := r.data[expenseID]
 	if !ok {

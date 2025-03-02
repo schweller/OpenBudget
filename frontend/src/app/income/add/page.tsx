@@ -20,8 +20,9 @@ const formSchema = z.object({
   amount: z.coerce.number().positive({
     message: "Amount must be a positive number.",
   }),
-  date: z.date({
-    message: "Please select a date.",
+  date: z.coerce.date({
+    required_error: "Please select a date.",
+    invalid_type_error: "That's not a valid date!",
   }),
 })
 
@@ -46,8 +47,8 @@ export default function AddIncomePage() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     addIncome({
       source: values.source,
-      amount: values.amount,
-      date: values.date,
+      amount: values.amount.toString(),
+      date: values.date.toISOString(),
     })
     router.push("/income")
   }
@@ -125,7 +126,12 @@ export default function AddIncomePage() {
                       <FormItem>
                         <FormLabel>Date</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} value={field.value.toISOString().split('T')[0]} />
+                          <Input
+                            type="date"
+                            {...field}
+                            value={field.value instanceof Date ? field.value.toISOString().split("T")[0] : ""}
+                            onChange={(e) => field.onChange(new Date(e.target.value))}
+                          />
                         </FormControl>
                         <FormDescription>The date the income was received</FormDescription>
                         <FormMessage />
