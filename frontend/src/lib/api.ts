@@ -62,6 +62,20 @@ export async function addExpense(expense: Omit<Expense, "id">): Promise<Expense>
   return response.json()
 }
 
+export async function fetchExpense(id: string): Promise<Expense> {
+  const response = await fetch(`${API_ENDPOINT}/expenses/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  })
+  if (!response.ok) {
+    throw new Error("Failed to fetch expense")
+  }
+  return response.json()
+}
+
+
 export async function updateExpense(id: string, expense: Omit<Expense, "id">): Promise<Expense> {
   const response = await fetch(`${API_ENDPOINT}/expenses/${id}`, {
     method: "PUT",
