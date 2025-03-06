@@ -66,9 +66,11 @@ func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
 
 func (h *ExpenseHandler) handleUpdateExpense(c echo.Context) error {
 	payload := struct {
-		ID     uuid.UUID `param:"id"`
-		Amount float64   `json:"amount"`
-		Name   string    `json:"name"`
+		ID     uuid.UUID        `param:"id"`
+		Amount float64          `json:"amount"`
+		Name   string           `json:"name"`
+		Date   string           `json:"date,omitempty"`
+		Labels []entities.Label `json:"labels,omitempty"`
 	}{}
 
 	fmt.Println("Request body:", c.Request().Body)
@@ -79,7 +81,22 @@ func (h *ExpenseHandler) handleUpdateExpense(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "bad request")
 	}
 
-	exp, err := h.svc.UpdateExpenses(c.Request().Context(), payload.ID, decimal.NewFromFloat(payload.Amount), payload.Name, time.Now())
+	var date time.Time
+	if payload.Date != "" {
+		date, err = time.Parse(time.RFC3339, payload.Date)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "invalid date format")
+		}
+	} else {
+		date = time.Now()
+	}
+
+	var labelIDs []uuid.UUID
+	for _, label := range payload.Labels {
+		labelIDs = append(labelIDs, label.ID)
+	}
+
+	exp, err := h.svc.UpdateExpenses(c.Request().Context(), payload.ID, decimal.NewFromFloat(payload.Amount), payload.Name, date, labelIDs)
 
 	if err != nil {
 		return err
@@ -145,4 +162,21 @@ func (h *ExpenseHandler) handleAddLabel(c echo.Context) error {
 	fmt.Println("Label added to expense:", exp)
 
 	return c.JSON(http.StatusOK, okResp{exp})
+}
+
+func (h *ExpenseHandler) handleGetExpenseById(c echo.Context) error {
+	id := c.Param("id")
+	expenseID, err := uuid.Parse(id)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "invalid expense ID format")
+	}
+
+	expense, err := h.svc.GetExpenseById(c.Request().Context(), expenseID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error fetching expense")
+	}
+
+	fmt.Println("Expense fetched:", expense)
+
+	return c.JSON(http.StatusOK, okResp{expense})
 }

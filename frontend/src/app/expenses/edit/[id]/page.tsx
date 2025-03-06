@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { MultiSelect } from "@/components/ui/multi-select"
+import { MultiSelect, Option } from "@/components/ui/multi-select"
 import { useFinanceStore } from "@/lib/store"
 import { Header } from "@/components/header"
+import { Expense } from "@/lib/api"
 
 const formSchema = z.object({
   description: z.string().min(2, {
@@ -38,8 +39,9 @@ const formSchema = z.object({
   }),
 })
 
-export default function EditExpensePage({ params }: { params: { id: string } }) {
+export default function EditExpensePage() {
   const router = useRouter()
+  const params = useParams()
   const { expenses, updateExpense, deleteExpense, labels } = useFinanceStore()
   const [mounted, setMounted] = useState(false)
 
@@ -49,6 +51,13 @@ export default function EditExpensePage({ params }: { params: { id: string } }) 
 
   const expense = expenses.find((e) => e.id === params.id)
 
+  const transformExpenseLabels = (expense: Expense) => {
+    var mappedLabels = [] as Option[]
+    if (expense.labels.length > 0) {
+      expense.labels.map((id) => mappedLabels.push(labels.find((b) => b.id === id)!))
+    }
+    return mappedLabels
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     // fix this type issue later, make it consistent
@@ -56,7 +65,7 @@ export default function EditExpensePage({ params }: { params: { id: string } }) 
       ? {
           description: expense.description,
           amount: expense.amount,
-          labels: expense.labels,
+          labels: transformExpenseLabels(expense),
           date: new Date(expense.date),
         }
       : {
@@ -160,8 +169,8 @@ export default function EditExpensePage({ params }: { params: { id: string } }) 
                         <FormControl>
                           <MultiSelect
                             options={labels}
-                            selected={field.value.map((label) => labels.find((l) => l.id === label.id)!)}
-                            onChange={(selected) => field.onChange(selected.map((item) => item.id))}
+                            selected={field.value}
+                            onChange={(selected) => field.onChange(selected)}
                             placeholder="Select labels"
                           />
                         </FormControl>

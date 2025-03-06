@@ -30,6 +30,7 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 	srv.POST("/expenses/:expense_id/labels/:label_id", expenseHandler.handleAddLabel)
 
 	srv.GET("/expenses", expenseHandler.handleGetAllExpenses)
+	srv.GET("/expenses/:id", expenseHandler.handleGetExpenseById)
 	srv.GET("/expenses/by_month/:year/:month", expenseHandler.handleGetMonthlyExpenses)
 
 	srv.GET("/incomes", incomeHandler.handleGetAllIncomes)

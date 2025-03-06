@@ -57,7 +57,7 @@ func (c *ExpenseService) CreateExpense(ctx context.Context, amount decimal.Decim
 	return e, nil
 }
 
-func (c *ExpenseService) UpdateExpenses(ctx context.Context, id uuid.UUID, amount decimal.Decimal, description string, date time.Time) (entities.Expense, error) {
+func (c *ExpenseService) UpdateExpenses(ctx context.Context, id uuid.UUID, amount decimal.Decimal, description string, date time.Time, labels []uuid.UUID) (entities.Expense, error) {
 	e, err := c.repo.GetByID(ctx, id)
 
 	if err != nil {
@@ -66,6 +66,8 @@ func (c *ExpenseService) UpdateExpenses(ctx context.Context, id uuid.UUID, amoun
 
 	e.Amount = amount
 	e.Description = description
+	e.Date = date
+	e.LabelIDs = labels
 
 	updatedEntity, err := c.repo.Update(ctx, e)
 
@@ -113,4 +115,12 @@ func (c *ExpenseService) RemoveLabel(ctx context.Context, expenseID, labelID uui
 
 func (c *ExpenseService) GetAllExpenses(ctx context.Context) ([]entities.Expense, error) {
 	return c.repo.GetAll(ctx)
+}
+
+func (c *ExpenseService) GetExpenseById(ctx context.Context, id uuid.UUID) (entities.Expense, error) {
+	expense, err := c.repo.GetByID(ctx, id)
+	if err != nil {
+		return entities.Expense{}, err
+	}
+	return expense, nil
 }
