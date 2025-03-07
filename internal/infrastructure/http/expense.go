@@ -167,8 +167,6 @@ func (h *ExpenseHandler) handleAddLabel(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, okResp{exp})
 }
-<<<<<<< Updated upstream
-=======
 
 func (h *ExpenseHandler) handleGetExpenseById(c echo.Context) error {
 	id := c.Param("id")
@@ -226,22 +224,4 @@ func (h *ExpenseHandler) handleCreateMonthlyExpense(c echo.Context) error {
 	fmt.Println("New monthly expense created:", exp)
 
 	return c.JSON(http.StatusOK, okResp{exp})
-}
->>>>>>> Stashed changes
-
-func (h *ExpenseHandler) handleGetExpenseById(c echo.Context) error {
-	id := c.Param("id")
-	expenseID, err := uuid.Parse(id)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "invalid expense ID format")
-	}
-
-	expense, err := h.svc.GetExpenseById(c.Request().Context(), expenseID)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "error fetching expense")
-	}
-
-	fmt.Println("Expense fetched:", expense)
-
-	return c.JSON(http.StatusOK, okResp{expense})
 }
