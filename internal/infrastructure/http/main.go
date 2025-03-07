@@ -11,7 +11,7 @@ type okResp struct {
 
 func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 
-	expenseHandler := NewExpenseHandler(c.ExpenseService)
+	expenseHandler := NewExpenseHandler(c.ExpenseService, c.ExpenseGroupService)
 	incomeHandler := NewIncomeHandler(c.IncomeService)
 	labelHandler := NewLabelHandler(c.LabelService)
 	srv.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -26,6 +26,7 @@ func InitHTTPHandlers(srv *echo.Echo, c *services.Container) {
 		}
 	})
 	srv.POST("/expenses", expenseHandler.handleCreateExpense)
+	srv.POST("/expenses/monthly", expenseHandler.handleCreateMonthlyExpense)
 	srv.PUT("/expenses/:id", expenseHandler.handleUpdateExpense)
 	srv.POST("/expenses/:expense_id/labels/:label_id", expenseHandler.handleAddLabel)
 
