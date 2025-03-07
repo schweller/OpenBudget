@@ -3,9 +3,10 @@ package services
 import "github.com/schweller/expenzen/internal/infrastructure/memory"
 
 type Container struct {
-	ExpenseService *ExpenseService
-	LabelService   *LabelService
-	IncomeService  *IncomeService
+	ExpenseService      *ExpenseService
+	LabelService        *LabelService
+	IncomeService       *IncomeService
+	ExpenseGroupService *ExpenseGroupService
 }
 
 func NewContainer() *Container {
@@ -13,16 +14,19 @@ func NewContainer() *Container {
 	labelRepo := memory.NewInMemoryLabelRepo()
 	expenseRepo := memory.NewInMemoryExpenseRepository()
 	incomeRepo := memory.NewInMemoryIncomeRepository()
+	expenseGroupRepo := memory.NewInMemoryExpenseGroupRepository()
 
 	// Create services
 	labelService := NewLabelService(labelRepo, expenseRepo)
-	expenseService := NewExpenseService(expenseRepo, labelRepo)
+	expenseService := NewExpenseService(expenseRepo, labelRepo, expenseGroupRepo)
 	incomeService := NewIncomeService(incomeRepo)
+	expenseGroupService := NewExpenseGroupService(expenseRepo, expenseGroupRepo)
 
 	// Create container
 	return &Container{
-		ExpenseService: expenseService,
-		LabelService:   labelService,
-		IncomeService:  incomeService,
+		ExpenseService:      expenseService,
+		LabelService:        labelService,
+		IncomeService:       incomeService,
+		ExpenseGroupService: expenseGroupService,
 	}
 }

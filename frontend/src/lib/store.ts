@@ -39,6 +39,7 @@ interface FinanceStore {
   updateLabel: (id: string, label: Omit<Label, "id">) => Promise<void>
   deleteLabel: (id: string) => Promise<void>
   setDateRange: (startDate: Date, endDate: Date) => void
+  transformLabels: (labels: string[]) => Omit<Label, "amount">[]
   calculateTotalExpenses: () => number
   calculateTotalIncome: () => number
 }
@@ -164,6 +165,14 @@ export const useFinanceStore = create<FinanceStore>()(
         const income = get().income
         return income.reduce((total, income) => total + Number(income.amount), 0)
       },
+      transformLabels: (labels) => {
+        const labelStore = get().labels
+        const mappedLabels = [] as Label[]
+        if (labels.length > 0) {
+          labels.map((id) => mappedLabels.push(labelStore.find((b) => b.id === id)!))
+        }
+        return mappedLabels
+      }
     }),
     {
       name: "finance-store",

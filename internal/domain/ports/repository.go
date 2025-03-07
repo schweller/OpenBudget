@@ -40,3 +40,7 @@ type IncomeRepository interface {
 	GetAll(ctx context.Context) ([]entities.Income, error)
 	GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Income, error)
 }
+
+type ExpenseGroupRepository interface {
+	Create(ctx context.Context, expenseGroup entities.ExpenseGroup) error
+}

@@ -42,7 +42,7 @@ const formSchema = z.object({
 export default function EditExpensePage() {
   const router = useRouter()
   const params = useParams()
-  const { expenses, updateExpense, deleteExpense, labels } = useFinanceStore()
+  const { expenses, updateExpense, deleteExpense, labels, transformLabels } = useFinanceStore()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function EditExpensePage() {
       ? {
           description: expense.description,
           amount: expense.amount,
-          labels: transformExpenseLabels(expense),
+          labels: transformLabels(expense.labels),
           date: new Date(expense.date),
         }
       : {

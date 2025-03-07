@@ -9,17 +9,20 @@ import (
 	"github.com/schweller/expenzen/internal/domain/entities"
 	"github.com/schweller/expenzen/internal/domain/ports"
 	"github.com/shopspring/decimal"
+	"github.com/teambition/rrule-go"
 )
 
 type ExpenseService struct {
 	repo      ports.ExpenseRepository
 	labelRepo ports.LabelRepository
+	egRepo    ports.ExpenseGroupRepository
 }
 
-func NewExpenseService(repo ports.ExpenseRepository, labelRepo ports.LabelRepository) *ExpenseService {
+func NewExpenseService(repo ports.ExpenseRepository, labelRepo ports.LabelRepository, egRepo ports.ExpenseGroupRepository) *ExpenseService {
 	return &ExpenseService{
 		repo:      repo,
 		labelRepo: labelRepo,
+		egRepo:    egRepo,
 	}
 }
 
@@ -123,4 +126,42 @@ func (c *ExpenseService) GetExpenseById(ctx context.Context, id uuid.UUID) (enti
 		return entities.Expense{}, err
 	}
 	return expense, nil
+}
+
+func (c *ExpenseService) CreateRecurrentExpense(ctx context.Context, amount decimal.Decimal, description string, startDate time.Time, labels []uuid.UUID, expenseGroup entities.ExpenseGroup) ([]entities.Expense, error) {
+	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		return nil, errors.New("expense amount must be positive")
+	}
+
+	rule, err := rrule.NewRRule(rrule.ROption{
+		Freq:    rrule.MONTHLY,
+		Count:   12,
+		Dtstart: startDate,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	dates := rule.All()
+
+	var expenses []entities.Expense
+
+	for _, date := range dates {
+		e := entities.Expense{
+			ID:           uuid.New(),
+			Amount:       amount,
+			Description:  description,
+			Date:         date,
+			LabelIDs:     labels,
+			ExpenseGroup: expenseGroup,
+		}
+
+		if err := c.repo.Create(ctx, e); err != nil {
+			return nil, err
+		}
+
+		expenses = append(expenses, e)
+	}
+
+	return expenses, nil
 }

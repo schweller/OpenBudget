@@ -13,14 +13,18 @@ import (
 )
 
 type ExpenseHandler struct {
-	svc *services.ExpenseService
+	svc   *services.ExpenseService
+	egSvc *services.ExpenseGroupService
 }
 
-func NewExpenseHandler(s *services.ExpenseService) *ExpenseHandler {
-	return &ExpenseHandler{s}
+func NewExpenseHandler(s *services.ExpenseService, e *services.ExpenseGroupService) *ExpenseHandler {
+	return &ExpenseHandler{
+		svc:   s,
+		egSvc: e,
+	}
 }
 
-type DTO struct {
+type CreateExpenseDTO struct {
 	Amount float64          `json:"amount"`
 	Name   string           `json:"name"`
 	Date   string           `json:"date,omitempty"`
@@ -28,7 +32,7 @@ type DTO struct {
 }
 
 func (h *ExpenseHandler) handleCreateExpense(c echo.Context) error {
-	var payload DTO
+	var payload CreateExpenseDTO
 
 	fmt.Println("Request body:", c.Request().Body)
 	err := c.Bind(&payload)
@@ -163,6 +167,67 @@ func (h *ExpenseHandler) handleAddLabel(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, okResp{exp})
 }
+<<<<<<< Updated upstream
+=======
+
+func (h *ExpenseHandler) handleGetExpenseById(c echo.Context) error {
+	id := c.Param("id")
+	expenseID, err := uuid.Parse(id)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "invalid expense ID format")
+	}
+
+	expense, err := h.svc.GetExpenseById(c.Request().Context(), expenseID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error fetching expense")
+	}
+
+	fmt.Println("Expense fetched:", expense)
+
+	return c.JSON(http.StatusOK, okResp{expense})
+}
+
+func (h *ExpenseHandler) handleCreateMonthlyExpense(c echo.Context) error {
+	var payload CreateExpenseDTO
+
+	fmt.Println("Request body:", c.Request().Body)
+	err := c.Bind(&payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	var date time.Time
+	if payload.Date != "" {
+		date, err = time.Parse(time.RFC3339, payload.Date)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "invalid date format")
+		}
+	} else {
+		date = time.Now()
+	}
+
+	var labelIDs []uuid.UUID
+	for _, label := range payload.Labels {
+		labelIDs = append(labelIDs, label.ID)
+	}
+
+	expenseGroup, err := h.egSvc.CreateExpenseGroup(c.Request().Context())
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error creating expense group")
+	}
+
+	exp, err := h.svc.CreateRecurrentExpense(c.Request().Context(), decimal.NewFromFloat(payload.Amount), payload.Name, date, labelIDs, expenseGroup)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error creating expense")
+	}
+
+	fmt.Println("New monthly expense created:", exp)
+
+	return c.JSON(http.StatusOK, okResp{exp})
+}
+>>>>>>> Stashed changes
 
 func (h *ExpenseHandler) handleGetExpenseById(c echo.Context) error {
 	id := c.Param("id")
