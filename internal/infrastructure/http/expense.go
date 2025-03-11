@@ -7,8 +7,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/schweller/expenzen/internal/domain/entities"
-	services "github.com/schweller/expenzen/internal/domain/services"
+	"github.com/schweller/openbudget/internal/domain/entities"
+	services "github.com/schweller/openbudget/internal/domain/services"
 	"github.com/shopspring/decimal"
 )
 

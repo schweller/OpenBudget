@@ -1,4 +1,4 @@
-module github.com/schweller/expenzen
+module github.com/schweller/openbudget
 
 go 1.22.2
 

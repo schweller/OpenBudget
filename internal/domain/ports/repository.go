@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/schweller/expenzen/internal/domain/entities"
+	"github.com/schweller/openbudget/internal/domain/entities"
 	"github.com/shopspring/decimal"
 )
 
@@ -14,7 +14,6 @@ type ExpenseRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (entities.Expense, error)
 	GetAll(ctx context.Context) ([]entities.Expense, error)
 	GetByPeriod(ctx context.Context, start, end time.Time) ([]entities.Expense, error)
-	// GetRollovers(ctx context.Context) ([]entities.Expense, error)
 	AddLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	RemoveLabel(ctx context.Context, expenseID, labelID uuid.UUID) (entities.Expense, error)
 	Update(ctx context.Context, expense entities.Expense) (entities.Expense, error)
@@ -31,8 +30,6 @@ type LabelRepository interface {
 	Create(ctx context.Context, label entities.Label) error
 	GetByID(ctx context.Context, id uuid.UUID) (entities.Label, error)
 	GetAllLabels(ctx context.Context) ([]entities.Label, error)
-	// AssociateWithExpense(ctx context.Context, labelID, expenseID uuid.UUID) error
-	// ListAll(ctx context.Context) ([]entities.Label, error)
 }
 
 type IncomeRepository interface {

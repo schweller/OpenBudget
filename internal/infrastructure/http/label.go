@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/schweller/expenzen/internal/domain/entities"
-	"github.com/schweller/expenzen/internal/domain/services"
+	"github.com/schweller/openbudget/internal/domain/entities"
+	"github.com/schweller/openbudget/internal/domain/services"
 )
 
 type LabelHandler struct {

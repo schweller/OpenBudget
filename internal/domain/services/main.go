@@ -1,6 +1,6 @@
 package services
 
-import "github.com/schweller/expenzen/internal/infrastructure/memory"
+import "github.com/schweller/openbudget/internal/infrastructure/memory"
 
 type Container struct {
 	ExpenseService      *ExpenseService

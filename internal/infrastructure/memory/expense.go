@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/schweller/expenzen/internal/domain/entities"
+	"github.com/schweller/openbudget/internal/domain/entities"
 )
 
 type InMemoryExpenseRepository struct {
@@ -37,7 +37,6 @@ func (r *InMemoryExpenseRepository) GetAll(ctx context.Context) ([]entities.Expe
 	return all, nil
 }
 
-// Create adds a new Expense to the in-memory map.
 func (r *InMemoryExpenseRepository) Create(ctx context.Context, e entities.Expense) error {
 	// r.mu.Lock()
 	// defer r.mu.Unlock()

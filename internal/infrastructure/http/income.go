@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/schweller/expenzen/internal/domain/services"
+	"github.com/schweller/openbudget/internal/domain/services"
 	"github.com/shopspring/decimal"
 )
 

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/schweller/expenzen/internal/domain/entities"
-	"github.com/schweller/expenzen/internal/domain/ports"
+	"github.com/schweller/openbudget/internal/domain/entities"
+	"github.com/schweller/openbudget/internal/domain/ports"
 	"github.com/shopspring/decimal"
 )
 
