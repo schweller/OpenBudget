@@ -8,12 +8,12 @@ OpenBudget is a self-hosted, open-source budgeting and personal finance manageme
 ## Features
 
 - **Privacy-focused**: Your financial data stays on your own server
-- **Multi-platform**: Works on desktop and mobile browsers
-- **Reporting**: Generate insights with customizable reports and dashboards
-- **Categorization**: Automatic and manual transaction categorization
-- **Import/Export**: Support for common financial data formats (CSV, OFX, QFX)
+- **Multi-platform**: Works on desktop and mobile browsers - Coming soon!
+- **Reporting**: Generate insights with customizable reports and dashboards - Coming soon!
+- **Categorization**: Automatic and manual transaction categorization - Coming soon!
+<!-- - **Import/Export**: Support for common financial data formats (CSV, OFX, QFX)
 - **Multi-user**: Optional shared access for families or teams
-- **API-first**: Well-documented API for integration with other tools
+- **API-first**: Well-documented API for integration with other tools -->
 
 ## Quick Start
 
@@ -45,9 +45,9 @@ npm install
 npm run build
 ```
 
-## Configuration
+<!-- ## Configuration
 
-OpenBudget can be configured via environment variables, command-line flags, or a configuration file. See the [configuration documentation](docs/configuration.md) for details.
+OpenBudget can be configured via environment variables, command-line flags, or a configuration file. See the [configuration documentation](docs/configuration.md) for details. -->
 
 ## Development
 
